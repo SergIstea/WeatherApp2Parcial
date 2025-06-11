@@ -3,31 +3,31 @@ package com.weatherapp2parcial.presentation.cities
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.weatherapp2parcial.data.remote.CityDto
+import com.weatherapp2parcial.presentation.cities.CitiesViewModel
+import androidx.compose.foundation.lazy.items
 
 @Composable
 fun CitiesScreen(
     viewModel: CitiesViewModel = viewModel(),
-    onCitySelected: (String) -> Unit
+    onCitySelected: (CityDto) -> Unit
 ) {
     val state by viewModel.state.collectAsState()
-    var search by remember { mutableStateOf("") }
+    var query by remember { mutableStateOf("") }
 
-    LaunchedEffect(true) {
-        viewModel.onEvent(CitiesEvent.LoadCities)
-    }
-
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        TextField(
-            value = search,
+    Column(modifier = Modifier.padding(16.dp)) {
+        OutlinedTextField(
+            value = query,
             onValueChange = {
-                search = it
-                viewModel.onEvent(CitiesEvent.SearchCity(it))
+                query = it
+                viewModel.onIntent(CitiesIntent.SearchCity(query))
             },
             label = { Text("Buscar ciudad") },
             modifier = Modifier.fillMaxWidth()
@@ -35,15 +35,27 @@ fun CitiesScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn {
-            items(state.filteredCities) { city ->
-                Text(
-                    text = city,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onCitySelected(city) }
-                        .padding(12.dp)
-                )
+        when {
+            state.isLoading -> {
+                CircularProgressIndicator()
+            }
+
+            state.error != null -> {
+                Text("Error: ${state.error}")
+            }
+
+            else -> {
+                LazyColumn {
+                    items(state.cities) { city ->
+                        Text(
+                            text = "${city.name}, ${city.country}",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onCitySelected(city) }
+                                .padding(8.dp)
+                        )
+                    }
+                }
             }
         }
     }

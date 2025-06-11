@@ -1,26 +1,34 @@
 package com.weatherapp2parcial.presentation.cities
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.weatherapp2parcial.data.remote.CityService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class CitiesViewModel : ViewModel() {
 
     private val _state = MutableStateFlow(CitiesState())
-    val state: StateFlow<CitiesState> = _state.asStateFlow()
+    val state: StateFlow<CitiesState> = _state
 
-    fun onEvent(event: CitiesEvent) {
-        when (event) {
-            is CitiesEvent.SearchCity -> {
-                val filtered = _state.value.allCities.filter {
-                    it.contains(event.query, ignoreCase = true)
-                }
-                _state.value = _state.value.copy(filteredCities = filtered)
+    fun onIntent(intent: CitiesIntent) {
+        when (intent) {
+            is CitiesIntent.SearchCity -> {
+                searchCity(intent.query)
             }
-            is CitiesEvent.LoadCities -> {
-                val cities = listOf("Buenos Aires", "Córdoba", "Rosario", "Mendoza", "Salta")
-                _state.value = _state.value.copy(allCities = cities, filteredCities = cities)
+        }
+    }
+
+    private fun searchCity(query: String) {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true, error = null) }
+            try {
+                val cities = CityService().getCityByName(query)
+                _state.update { it.copy(cities = cities, isLoading = false) }
+            } catch (e: Exception) {
+                _state.update { it.copy(isLoading = false, error = e.message ?: "Unknown error") }
             }
         }
     }
