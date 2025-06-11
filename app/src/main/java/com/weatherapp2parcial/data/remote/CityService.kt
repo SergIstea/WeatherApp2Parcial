@@ -18,4 +18,15 @@ class CityService {
             }
         return response.body()
     }
+    suspend fun getCurrentWeatherByCoordinates(lat: Double, lon: Double): CurrentWeatherDto {
+        val response: HttpResponse = httpClient.get("https://api.openweathermap.org/data/2.5/weather") {
+            parameter("lat", lat)
+            parameter("lon", lon)
+            parameter("appid", apiKey)
+            parameter("units", "metric") // para mostrar temperatura en °C
+            parameter("lang", "es") // para que la descripción venga en español (opcional)
+        }
+        return response.body()
+    }
+
 }
