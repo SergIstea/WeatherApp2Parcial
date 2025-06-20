@@ -32,7 +32,7 @@ fun WeatherApp() {
         ) { backStackEntry ->
             val lat = backStackEntry.arguments?.getFloat("lat")?.toDouble() ?: 0.0
             val lon = backStackEntry.arguments?.getFloat("lon")?.toDouble() ?: 0.0
-            WeatherScreen(lat = lat, lon = lon)
+            WeatherScreen(lat = lat, lon = lon, navController = navController)
         }
     }
 }

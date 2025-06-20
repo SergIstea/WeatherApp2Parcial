@@ -24,6 +24,9 @@ import androidx.compose.material3.MaterialTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.navigation.NavController
 
 
 
@@ -31,7 +34,8 @@ import java.util.Locale
 fun WeatherScreen(
     lat: Double,
     lon: Double,
-    viewModel: WeatherViewModel = viewModel()
+    viewModel: WeatherViewModel = viewModel(),
+    navController: NavController
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -51,6 +55,12 @@ fun WeatherScreen(
             }
 
             else -> {
+                Button(
+                    onClick = { navController.navigate("cities") },
+                    modifier = Modifier.padding(vertical = 8.dp)
+                ) {
+                    Text("🌍 Cambiar ciudad")
+                }
                 state.weather?.let { data ->
                     Text("🌍 Ciudad: ${data.cityName}")
                     Text("🌡️ Temperatura: ${data.main.temp}°C")
