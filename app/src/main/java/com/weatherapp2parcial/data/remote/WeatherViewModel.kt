@@ -18,7 +18,11 @@ class WeatherViewModel : ViewModel() {
     fun onIntent(intent: WeatherIntent) {
         when (intent) {
             is WeatherIntent.LoadWeather -> {
-                loadWeather(intent.lat, intent.lon)
+                getCurrentWeather(intent.lat, intent.lon)
+                getForecast(intent.lat, intent.lon)
+            }
+            is WeatherIntent.LoadForecast -> {
+                getForecast(intent.lat, intent.lon)
             }
         }
     }
@@ -34,4 +38,27 @@ class WeatherViewModel : ViewModel() {
             }
         }
     }
+    private fun getCurrentWeather(lat: Double, lon: Double) {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isLoading = true, error = null)
+            try {
+                val result = service.getCurrentWeatherByCoordinates(lat, lon)
+                _state.value = _state.value.copy(weather = result, isLoading = false)
+            } catch (e: Exception) {
+                _state.value = _state.value.copy(error = e.message, isLoading = false)
+            }
+        }
+    }
+    private fun getForecast(lat: Double, lon: Double) {
+        viewModelScope.launch {
+            try {
+                val result = service.get5DayForecast(lat, lon)
+                println("🧩 Forecast recibido: ${result.list.size} entradas")
+                _state.value = _state.value.copy(forecast = result.list)
+            } catch (e: Exception) {
+                _state.value = _state.value.copy(error = e.message)
+            }
+        }
+    }
+
 }
