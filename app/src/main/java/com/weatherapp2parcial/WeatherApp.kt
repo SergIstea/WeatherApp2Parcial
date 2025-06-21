@@ -11,10 +11,16 @@ import com.weatherapp2parcial.presentation.cities.CitiesScreen
 import com.weatherapp2parcial.presentation.weather.WeatherScreen
 
 @Composable
-fun WeatherApp() {
+fun WeatherApp(savedLocation: Pair<Double, Double>?) {
     val navController: NavHostController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "cities") {
+    val startDestination = if (savedLocation != null) {
+        "weather/${savedLocation.first}/${savedLocation.second}"
+    } else {
+        "cities"
+    }
+
+    NavHost(navController = navController, startDestination = startDestination) {
         composable("cities") {
             CitiesScreen(
                 onCitySelected = { city ->
