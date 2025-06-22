@@ -13,6 +13,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.weatherapp2parcial.data.remote.CityDto
 import com.weatherapp2parcial.presentation.cities.CitiesViewModel
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.ui.platform.LocalContext
 import com.weatherapp2parcial.data.local.UserPreferences
 import kotlinx.coroutines.launch
@@ -20,7 +21,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun CitiesScreen(
     viewModel: CitiesViewModel = viewModel(),
-    onCitySelected: (CityDto) -> Unit
+    onCitySelected: (CityDto) -> Unit,
+    onRequestLocation: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
     var query by remember { mutableStateOf("") }
@@ -28,6 +30,14 @@ fun CitiesScreen(
     val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = Modifier.padding(16.dp)) {
+        Button(
+            onClick = { onRequestLocation() },
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .fillMaxWidth()
+        ) {
+            Text("Mostrar ubicación")
+        }
         OutlinedTextField(
             value = query,
             onValueChange = {
@@ -39,6 +49,7 @@ fun CitiesScreen(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+
 
         when {
             state.isLoading -> {
