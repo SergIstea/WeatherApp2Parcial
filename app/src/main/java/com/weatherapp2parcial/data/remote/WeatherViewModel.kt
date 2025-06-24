@@ -27,17 +27,6 @@ class WeatherViewModel : ViewModel() {
         }
     }
 
-    private fun loadWeather(lat: Double, lon: Double) {
-        viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, error = null) }
-            try {
-                val weather = service.getCurrentWeatherByCoordinates(lat, lon)
-                _state.update { it.copy(weather = weather, isLoading = false) }
-            } catch (e: Exception) {
-                _state.update { it.copy(error = e.message ?: "Error al cargar el clima", isLoading = false) }
-            }
-        }
-    }
     private fun getCurrentWeather(lat: Double, lon: Double) {
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true, error = null)
