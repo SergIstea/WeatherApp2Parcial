@@ -1,11 +1,12 @@
-package com.weatherapp2parcial.data.remote
+package com.weatherapp2parcial.presentation.weather
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.weatherapp2parcial.data.remote.CityService
+import com.weatherapp2parcial.data.remote.WeatherIntent
+import com.weatherapp2parcial.data.remote.WeatherState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class WeatherViewModel : ViewModel() {
@@ -20,9 +21,11 @@ class WeatherViewModel : ViewModel() {
             is WeatherIntent.LoadWeather -> {
                 getCurrentWeather(intent.lat, intent.lon)
                 getForecast(intent.lat, intent.lon)
+                println("🧩 Esta en load weather")
             }
             is WeatherIntent.LoadForecast -> {
                 getForecast(intent.lat, intent.lon)
+                println("🧩 Esta en load LoadForecast")
             }
         }
     }

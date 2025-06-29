@@ -15,7 +15,7 @@
             val response: HttpResponse =
                 httpClient.get("https://api.openweathermap.org/geo/1.0/direct") {
                     parameter("q", city)
-                    parameter("limit", 5)
+                    parameter("limit", 7)
                     parameter("appid", apiKey)
                 }
             val cityList: List<CityDto> = response.body()

@@ -19,8 +19,10 @@
     @SuppressLint("MissingPermission")
     @Composable
     fun WeatherApp(savedLocation: Pair<Double, Double>?) {
+
         val navController: NavHostController = rememberNavController()
         val context = LocalContext.current
+
         val fusedLocationClient = remember {
             LocationServices.getFusedLocationProviderClient(context)        }
         val startDestination = if (savedLocation != null) {
@@ -43,6 +45,9 @@
                                     navController.navigate("weather/${location.latitude}/${location.longitude}")
                                 } else {
                                     Log.e("WeatherApp", "No se pudo obtener la ubicación (es null)")
+                                    val defaultLat = -34.5235766
+                                    val defaultLon = -58.5294344
+                                    navController.navigate("weather/$defaultLat/$defaultLon")
                                 }
                             }
                             .addOnFailureListener {

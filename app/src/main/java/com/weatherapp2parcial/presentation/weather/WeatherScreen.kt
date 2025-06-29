@@ -26,7 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.weatherapp2parcial.data.local.UserPreferences
 import com.weatherapp2parcial.data.remote.WeatherIntent
-import com.weatherapp2parcial.data.remote.WeatherViewModel
+import com.weatherapp2parcial.presentation.weather.WeatherViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -48,7 +48,7 @@ fun WeatherScreen(
     LaunchedEffect(Unit) {
         viewModel.onIntent(WeatherIntent.LoadWeather(lat, lon))
     }
-
+// A partir de aca esta la estructura visual, todo lo que se dibuja esta dentro de una columna con padding
     Column(modifier = Modifier.padding(16.dp)) {
         when {
             state.isLoading -> {
@@ -103,20 +103,32 @@ fun WeatherScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text("📅 Pronóstico de 5 días:", style = MaterialTheme.typography.titleMedium)
 
+                val groupedForecast = state.forecast.groupBy { item ->
+                    // Convertimos el timestamp a solo "día"
+                    SimpleDateFormat("EEEE dd/MM", Locale("es", "ES")).format(Date(item.dt * 1000))
+                }
                 LazyColumn {
-                    items(state.forecast) { day ->
-                        val date = SimpleDateFormat("EEE dd/MM", Locale.getDefault())
-                            .format(Date(day.dt * 1000)) // timestamp en segundos
+                    groupedForecast.forEach { (day, items) ->
+                        item {
+                            Text(
+                                text = "📅 $day",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text("📆 $date")
-                            Text("🌡️ Temp: ${day.main.temp.toInt()}°")
-                            Text("☁️ ${day.weather.firstOrNull()?.description ?: "-"}")
+                        items(items) { forecastItem ->
+                            val hour = SimpleDateFormat("EEEE dd/MM", Locale("es", "ES")).format(Date(forecastItem.dt * 1000))
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text("🕒 $hour", modifier = Modifier.weight(1f))
+                                Text("🌡️ Temp: ${forecastItem.main.temp.toInt()}°", modifier = Modifier.weight(1f))
+                                Text("☁️ ${forecastItem.weather.firstOrNull()?.description ?: "-"}", modifier = Modifier.weight(1f))
+                            }
                         }
                     }
                 }
