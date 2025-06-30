@@ -14,9 +14,11 @@ import com.weatherapp2parcial.data.remote.CityDto
 import com.weatherapp2parcial.presentation.cities.CitiesViewModel
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.platform.LocalContext
 import com.weatherapp2parcial.data.local.UserPreferences
 import kotlinx.coroutines.launch
+import androidx.compose.ui.text.style.TextAlign
 
 @Composable
 fun CitiesScreen(
@@ -30,6 +32,14 @@ fun CitiesScreen(
     val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = "🌦 La aplicación del clima",
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            textAlign = TextAlign.Center
+        )
         Button(
             onClick = { onRequestLocation() },
             modifier = Modifier
