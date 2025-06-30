@@ -118,7 +118,7 @@ fun WeatherScreen(
                         }
 
                         items(items) { forecastItem ->
-                            val hour = SimpleDateFormat("EEEE dd/MM", Locale("es", "ES")).format(Date(forecastItem.dt * 1000))
+                            val hour = SimpleDateFormat("HH:mm", Locale("es", "ES")).format(Date(forecastItem.dt * 1000))
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()

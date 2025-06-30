@@ -43,7 +43,7 @@
                                 if (location != null) {
                                     Log.d("WeatherApp", "Ubicación obtenida: ${location.latitude}, ${location.longitude}")
                                     navController.navigate("weather/${location.latitude}/${location.longitude}")
-                                } else {
+                                } else {+
                                     Log.e("WeatherApp", "No se pudo obtener la ubicación (es null)")
                                     val defaultLat = -34.5235766
                                     val defaultLon = -58.5294344
